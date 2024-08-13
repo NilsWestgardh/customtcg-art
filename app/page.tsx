@@ -120,13 +120,15 @@ export default function CustomTCGArtGenerator(): JSX.Element {
     
     try {
       if (!inputPrompt) return;
+      const constructedPrompt = `${disableDefaultPrompt} Subject matter: ${inputPrompt}. ${tcgs[selectedTCG].stylePrompt}, Pose: Dynamic, Composition: rule of thirds, Focus: Centered.`;
+
       const response = await fetch ("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ 
-          prompt: `${disableDefaultPrompt} Subject matter: ${inputPrompt}. ${tcgs[selectedTCG].stylePrompt}, Pose: Dynamic, Composition: rule of thirds, Focus: Centered.`,
+          prompt: constructedPrompt,
         })
       })
 
@@ -135,19 +137,24 @@ export default function CustomTCGArtGenerator(): JSX.Element {
       }
 
       const { imageUrl } = await response.json();
-
-      if (imageUrl) {
+      
+      if (!imageUrl) {
+        setError('Art URL not found.');
+      } else {
         toast("Art generated successfully!")
         setOutputArt(imageUrl);
-        setGenerating(false);
-      } else {
-        setError('Art URL not found.');;
       }
+
+      setGenerating(false);
 
     } catch (error) {
       console.error(error);
       setError('Failed to generate artwork. Please try again later.');
       setGenerating(false);
+      
+      setTimeout(() => {
+        setError(null);
+      }, 5000)
     }
   }
 

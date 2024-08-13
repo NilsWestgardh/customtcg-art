@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import fetch from "node-fetch";
 
+export const maxDuration = 45;
+
 export async function POST(
   req: NextRequest
 ) {
@@ -20,7 +22,6 @@ export async function POST(
             n: 1,
             size: "1024x1024",
         }),
-        timeout: 60000,
       })
 
       if (!response.ok) {
