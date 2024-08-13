@@ -33,8 +33,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { 
+  Alert, 
+  AlertDescription, 
+  AlertTitle 
+} from "@/components/ui/alert"
+import { 
   MdOpenInNew,
   MdDownload,
+  MdInfo,
 } from "react-icons/md";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import CustomtcgArtLogoBlack from "@/public/customtcg-art-logo-black.svg";
@@ -226,6 +232,15 @@ export default function CustomTCGArtGenerator(): JSX.Element {
           )}
           <ThemeToggle />
         </div>
+        {generating && (
+          <Alert>
+            <MdInfo className="w-[1.2rem] h-[1.2rem]" />
+            <AlertTitle>Credit the model!</AlertTitle>
+            <AlertDescription>
+              Credit DALL-E 3, on your custom card when you post it on Reddit. Leave a link to CustomTCG.art in the comment for ❤️!
+            </AlertDescription>
+          </Alert>
+        )}
         {outputArt && (
           <div className="w-full">
             <AspectRatio ratio={4 / 3}>
