@@ -121,8 +121,8 @@ export default function CustomTCGArtGenerator(): JSX.Element {
     try {
       if (!inputPrompt) return;
       const constructedPrompt = `${disableDefaultPrompt} Subject matter: ${inputPrompt}. ${tcgs[selectedTCG].stylePrompt}, Pose: Dynamic, Composition: rule of thirds, Focus: Centered.`;
-
-      const response = await fetch ("/api/generate", {
+  
+      const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,31 +130,29 @@ export default function CustomTCGArtGenerator(): JSX.Element {
         body: JSON.stringify({ 
           prompt: constructedPrompt,
         })
-      })
-
+      });
+  
+      const data = await response.json();
+  
       if (!response.ok) {
-        setError('API call failed.');
+        console.error('Error response from server:', data);
+        throw new Error(data.error || 'An unexpected error occurred');
       }
-
-      const { imageUrl } = await response.json();
-      
-      if (!imageUrl) {
-        setError('Art URL not found.');
-      } else {
-        toast("Art generated successfully!")
-        setOutputArt(imageUrl);
+  
+      if (!data.imageUrl) {
+        console.error('No image URL in response:', data);
+        throw new Error('Art URL not found in the response.');
       }
-
-      setGenerating(false);
-
+  
+      toast("Art generated successfully!")
+      setOutputArt(data.imageUrl);
+  
     } catch (error) {
-      console.error(error);
-      setError('Failed to generate artwork. Please try again later.');
+      console.error('Error generating artwork:', error);
+      setError(error instanceof Error ? error.message : 'Failed to generate artwork. Please try again later.');
+      toast.error('Failed to generate artwork. Please try again later.');
+    } finally {
       setGenerating(false);
-      
-      setTimeout(() => {
-        setError(null);
-      }, 5000)
     }
   }
 
