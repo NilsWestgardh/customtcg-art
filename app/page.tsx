@@ -134,7 +134,7 @@ export default function CustomTCGArtGenerator(): JSX.Element {
       })
 
       if (!response.ok) {
-        setError('Failed to generate artwork. Please try again later.');
+        setError('API call failed.');
       }
 
       const { imageUrl } = await response.json();
@@ -144,7 +144,7 @@ export default function CustomTCGArtGenerator(): JSX.Element {
         setOutputArt(imageUrl);
         setGenerating(false);
       } else {
-        setError('Failed to generate artwork. Please try again later.');;
+        setError('Art URL not found.');;
       }
       
     } catch (error) {
