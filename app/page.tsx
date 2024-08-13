@@ -6,6 +6,7 @@ import React, {
   useMemo 
 } from "react";
 import { useTheme } from "next-themes";
+import { usePostHog } from 'posthog-js/react';
 // Utils
 import Image from "next/image";
 import fetch from "node-fetch";
@@ -99,6 +100,7 @@ export default function CustomTCGArtGenerator(): JSX.Element {
   const [mounted, setMounted] = useState(false);
 
   const { theme } = useTheme();
+  const posthog = usePostHog();
   const { title, urlTitle, url } = useMemo(() => tcgs[selectedTCG], [selectedTCG]);
   const charCount = useMemo(() => inputPrompt.length, [inputPrompt]);
   const showCharCount = charCount > CHAR_COUNT_WARNING;
@@ -144,6 +146,10 @@ export default function CustomTCGArtGenerator(): JSX.Element {
         throw new Error('Art URL not found in the response.');
       }
   
+      posthog.capture('art_generated', {
+        tcg: selectedTCG,
+        prompt: inputPrompt,
+      });
       toast("Art generated successfully!")
       setOutputArt(data.imageUrl);
   
@@ -184,6 +190,10 @@ export default function CustomTCGArtGenerator(): JSX.Element {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
   
+      posthog.capture('art_downloaded', {
+        tcg: selectedTCG,
+        prompt: inputPrompt,
+      });
       toast.success('Image downloaded successfully!');
     } catch (error) {
       console.error('Error downloading image:', error);
@@ -269,6 +279,7 @@ export default function CustomTCGArtGenerator(): JSX.Element {
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 hover:text-slate-500 hover:underline transition-all"
+            onClick={(() => posthog.capture('tcg_link_clicked', { tcg: selectedTCG }))}
           >
             {urlTitle === "play.nexus" ? (
               <TooltipProvider>

@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
-import { Toaster } from "@/components/ui/sonner"
+import dynamic from 'next/dynamic'
+// Providers
 import { ThemeProvider } from "@/components/theme-provider"
+import { PHProvider } from './providers'
+// Styles
 import { Inter } from "next/font/google";
 import "./globals.css";
+// Components
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] });
+
+const PostHogPageView = dynamic(() => import('./PostHogPageView'), {
+  ssr: false,
+})
 
 export const metadata: Metadata = {
   title: "CustomTCG.art",
@@ -18,17 +27,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
-      </body>
+      <PHProvider>
+        <body className={inter.className}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <PostHogPageView /> 
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </body>
+      </PHProvider>
     </html>
   );
 }
