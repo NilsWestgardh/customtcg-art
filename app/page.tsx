@@ -1,5 +1,4 @@
 "use client"
-
 // Hooks
 import React, { 
   useState, 
@@ -46,6 +45,7 @@ type TCG = {
   url: string;
   stylePrompt: string;
 }
+
 const disableDefaultPrompt = "I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS."
 const tcgs: Record<string, TCG> = {
   nexus: { 
@@ -71,7 +71,6 @@ const tcgs: Record<string, TCG> = {
     urlTitle: "/r/CustomMarvelSnap", 
     url: "https://reddit.com/r/custommarvelsnap", 
     stylePrompt: "Style: Comic book aesthetic. Color palette: High saturation. Body proportions: Exaggerated. Lighting: Dynamic. Blending: Vivid. Details: Sharp. Edges: Bold linework. Mood: Heroic. Perspective: Dramatic." 
-
   },
   yugioh: { 
     title: "Yu-gi-oh!", 
@@ -90,7 +89,6 @@ const textPlaceholder = [
 
 const MAX_CHAR_COUNT = 200;
 const CHAR_COUNT_WARNING = 150;
-
 export default function CustomTCGArtGenerator(): JSX.Element {
   const [placeholder, setPlaceholder] = useState<string | null>(null);
   const [selectedTCG, setSelectedTCG] = useState<string>("nexus");
@@ -119,10 +117,9 @@ export default function CustomTCGArtGenerator(): JSX.Element {
     setGenerating(true);
     setError(null);
     toast("Generating artwork...")
-
+    
     try {
       if (!inputPrompt) return;
-
       const response = await fetch ("/api/generate", {
         method: "POST",
         headers: {
@@ -146,7 +143,7 @@ export default function CustomTCGArtGenerator(): JSX.Element {
       } else {
         setError('Art URL not found.');;
       }
-      
+
     } catch (error) {
       console.error(error);
       setError('Failed to generate artwork. Please try again later.');
